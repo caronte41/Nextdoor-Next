@@ -5,6 +5,7 @@ import type { AppProps } from "next/app";
 import { AppProvider } from "@/nextdoor/context/AppContext";
 import { AuthProvider } from "@/nextdoor/context/AuthContext";
 import Head from "next/head";
+import { Toaster } from "sonner";
 
 export default function App({ Component, pageProps }: AppProps) {
   const Layout = Component.Layout ? Component.Layout : React.Fragment;
@@ -28,8 +29,14 @@ export default function App({ Component, pageProps }: AppProps) {
               content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover"
               name="viewport"
             />
+            <script
+              async
+              defer
+              src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkBErYTxs3Rhosq2Z9C3kD2oPMxQV5oa4&libraries=places"
+            ></script>
           </Head>
           <Layout>
+            <Toaster position="top-right" richColors />
             <Component {...pageProps} />
           </Layout>
         </AppProvider>

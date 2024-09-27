@@ -4,7 +4,7 @@ export const GetCookie = (key, context = null) => {
   return getCookie(key, context);
 };
 
-export const SetCookie = (key, value, option = null, context = null) => {
+export const SetCookie = (key, value, option, context = null) => {
   var options = {
     ...context,
     ...option,

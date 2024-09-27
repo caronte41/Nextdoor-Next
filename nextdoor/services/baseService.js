@@ -7,7 +7,7 @@ const Service = (context) => {
     context != null
       ? GetCookie(process.env.NEXT_PUBLIC_AUTH, context)
       : GetCookie(process.env.NEXT_PUBLIC_AUTH);
-  var token = user ? `Bearer ${JSON.parse(user).jwt}` : null;
+  var token = user ? `Bearer ${JSON.parse(user)?.Token}` : null;
 
   let axiosService = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,

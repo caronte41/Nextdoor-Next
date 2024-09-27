@@ -11,6 +11,7 @@ const Button_Custom: React.FC<ButtonCustomProps> = ({
   children,
   ...props
 }) => {
+  console.log(props);
   return (
     <Button {...props}>
       {icon && <span className="mr-2">{icon}</span>}

@@ -11,6 +11,48 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        primary: {
+          50: "#F2E9DE",
+          100: "#E1D3BF",
+          200: "#D0BEA1",
+          300: "#BFA883",
+          400: "#A89160",
+          500: "#7D5D37",
+          600: "#6D4E2F",
+          700: "#5C4027",
+          800: "#4C331F",
+          900: "#3C2718",
+          DEFAULT: "#7D5D37",
+          foreground: "#ffffff",
+        },
+        secondary: {
+          50: "#F0F6F9",
+          100: "#DFECF2",
+          200: "#CDDEE8",
+          300: "#B8CEDD",
+          400: "#A9C2D4",
+          500: "#A2C2D2", // Default
+          600: "#8BA6BA",
+          700: "#728A9D",
+          800: "#5B6E82",
+          900: "#2B4552",
+          DEFAULT: "#A2C2D2",
+          foreground: "#ffffff",
+        },
+        third: {
+          50: "#f0fffa",
+          100: "#e1ffe4",
+          200: "#c3ffc8",
+          300: "#a4ffac",
+          400: "#85ff90",
+          500: "#D1A1A6",
+          600: "#76d982",
+          700: "#37667D",
+          800: "#2B4552",
+          900: "#2B4552",
+          DEFAULT: "#9DFFA2",
+          foreground: "#ffffff",
+        },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -21,14 +63,7 @@ const config: Config = {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
+
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",

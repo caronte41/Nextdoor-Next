@@ -1,61 +1,52 @@
-import Service from "@services/baseService";
+import Service from "@/nextdoor/services/baseService";
 //Helpers
-import { Toast } from "@helpers/toastHelper";
 
 export let createPromise = async (requestParameters) => {
-  let promise = new Promise(() => {});
-
   let service = Service(requestParameters?.context);
 
-  switch (requestParameters?.type) {
-    case "POST":
-      promise = await service.post(
-        requestParameters?.url,
-        requestParameters?.payload
-      );
+  try {
+    switch (requestParameters?.type) {
+      case "POST":
+        return await service.post(
+          requestParameters?.url,
+          requestParameters?.payload
+        );
 
-      break;
+      case "GET":
+        return await service.get(requestParameters?.url);
 
-    case "GET":
-      promise = await service.get(requestParameters?.url);
+      case "PUT":
+        return await service.put(
+          requestParameters?.url,
+          requestParameters?.payload
+        );
 
-      break;
+      case "PATCH":
+        return await service.patch(
+          requestParameters?.url,
+          requestParameters?.payload
+        );
 
-    case "PUT":
-      promise = service.put(requestParameters?.url, requestParameters?.payload);
+      case "DELETE":
+        return await service.delete(
+          requestParameters?.url,
+          requestParameters?.payload
+        );
 
-      break;
+      case "UPLOAD":
+        return await service.upload(
+          requestParameters?.url,
+          requestParameters?.payload,
+          requestParameters?.onUploadProgress
+        );
 
-    case "PATCH":
-      promise = service.patch(
-        requestParameters?.url,
-        requestParameters?.payload
-      );
-
-      break;
-
-    case "DELETE":
-      promise = service.delete(
-        requestParameters?.url,
-        requestParameters?.payload
-      );
-
-      break;
-
-    case "UPLOAD":
-      promise = service.upload(
-        requestParameters?.url,
-        requestParameters?.payload,
-        requestParameters?.onUploadProgress
-      );
-
-      break;
-
-    default:
-      break;
+      default:
+        throw new Error("Invalid request type");
+    }
+  } catch (error) {
+    console.error("Axios Request Error:", error);
+    throw error; // Rethrow the error after logging it
   }
-
-  return promise;
 };
 
 export const makeGetRequest = async (
@@ -205,14 +196,12 @@ export const makeUploadRequest = async (
 };
 
 const makeRequest = async (requestParameters) => {
-  return createPromise(requestParameters)
-    .then((response) => {
-      return handleSuccess(response);
-    })
-
-    .catch((error) => {
-      return handleError(error);
-    });
+  try {
+    const response = await createPromise(requestParameters);
+    return handleSuccess(response);
+  } catch (error) {
+    return handleError(error);
+  }
 };
 
 const handleSuccess = async (response) => {

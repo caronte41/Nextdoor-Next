@@ -23,9 +23,9 @@ export default function Header() {
         {/* Left side - Logo/Image */}
         <div className="flex items-center">
           <Image
-            //src="https://github.com/shadcn.png" // Replace with your logo path
+            src="/MAinIcon.png" // Replace with your logo path
             alt="Logo"
-            width={50}
+            width={200}
             height={50}
             className="cursor-pointer"
           />

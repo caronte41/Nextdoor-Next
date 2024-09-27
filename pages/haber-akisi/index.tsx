@@ -10,7 +10,7 @@ const items = [
   { value: "astro", label: "Astro" },
 ];
 
-export default function Home() {
+export default function NewsFeed() {
   const handleSelect = (selectedValue: string) => {
     console.log("Selected item:", selectedValue);
   };
@@ -26,4 +26,4 @@ export default function Home() {
   );
 }
 
-Home.Layout = MainLayout;
+NewsFeed.Layout = MainLayout;
