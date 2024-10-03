@@ -1,6 +1,7 @@
 //Helpers
 import { GetCookie } from "@/nextdoor/helpers/cookieHelper";
 import axios from "axios";
+import https from "https";
 
 const Service = (context) => {
   var user =
@@ -10,6 +11,9 @@ const Service = (context) => {
   var token = user ? `Bearer ${JSON.parse(user)?.Token}` : null;
 
   let axiosService = axios.create({
+    httpsAgent: new https.Agent({
+      rejectUnauthorized: false,
+    }),
     baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
     responseType: "json",
 

@@ -129,7 +129,7 @@ export default function Login() {
               <div className="flex items-center w-full space-x-2">
                 <Separator orientation="horizontal" className="w-1/3" />
                 <a
-                  href="/create-account"
+                  href="/hesap-olustur"
                   className="text-sm text-secondary-700 w-80 hover:underline"
                 >
                   Hesap oluştur

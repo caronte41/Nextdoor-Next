@@ -99,7 +99,9 @@ const Autocomplete_Custom: React.FC<AutocompleteCustomProps> = ({
           onChange={handleInputChange}
           placeholder={placeholder}
           aria-label={placeholder}
-          onFocus={() => setPopoverOpen(!!inputValue)}
+          onFocus={() => {
+            //setPopoverOpen(!!inputValue);
+          }}
         />
       </PopoverTrigger>
       {predictions.length > 0 && isPopoverOpen && (

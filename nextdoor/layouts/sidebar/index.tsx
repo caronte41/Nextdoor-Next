@@ -23,18 +23,21 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="px-3 py-4 overflow-y-auto flex flex-col justify-between mt-16 fixed top-0 left-0 z-40 w-64 h-[calc(100vh-75px)]">
-      <div className="space-y-4">
+    <div className="px-3 ml-4 py-4 overflow-y-auto flex flex-col justify-between mt-16 fixed top-0 left-0 z-40 w-64 h-[calc(100vh-75px)]">
+      <div className="space-y-4 mb-4">
+        {" "}
+        {/* This ensures space between sidebar items */}
         {sidebarItems.map((item) => (
           <Link key={item.linkTo} href={item.linkTo} passHref>
             <Button_Custom
               variant="ghost"
-              className="w-full space-y-4 justify-start"
+              className="w-full mb-4 justify-start text-lg"
             >
-              <span className="flex mr-4 items-center">
-                {item.icon}
-                {item.title}
-              </span>
+              <div className="flex items-center">
+                <span className="mr-4 text-2xl">{item.icon}</span>{" "}
+                {/* Larger icon with margin */}
+                <span>{item.title}</span>
+              </div>
             </Button_Custom>
           </Link>
         ))}

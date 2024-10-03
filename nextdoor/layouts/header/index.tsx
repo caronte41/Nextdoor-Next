@@ -1,4 +1,12 @@
+//React
 import * as React from "react";
+import { useRouter } from "next/router";
+//Context
+import { AuthContext } from "@/nextdoor/context/AuthContext";
+//Helpers
+import Routes from "@/nextdoor/helpers/constants/route";
+import { GetCookie } from "@/nextdoor/helpers/cookieHelper";
+//Components
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"; // shadcn avatar
 import {
   Card,
@@ -17,9 +25,12 @@ import {
 
 export default function Header() {
   //const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const router = useRouter();
+  const profileInfo = React.useContext(AuthContext);
+
   return (
     <header className="w-full border-b shadow-sm">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+      <div className="container mx-auto px-6 py-3 flex items-center justify-between">
         {/* Left side - Logo/Image */}
         <div className="flex items-center">
           <Image
@@ -45,7 +56,18 @@ export default function Header() {
           <PopoverContent className="w-48 p-4">
             <div className="flex flex-col space-y-2">
               <p className="text-sm font-medium">User Name</p>
-              <button className="text-left w-full">Profile</button>
+              <button
+                className="text-left w-full"
+                onClick={() =>
+                  router.push(
+                    `${Routes.profile}/${
+                      JSON.parse(profileInfo.user).AccountId
+                    }`
+                  )
+                }
+              >
+                Profile
+              </button>
               <button className="text-left w-full">Settings</button>
               <button className="text-left w-full">Logout</button>
             </div>

@@ -11,10 +11,9 @@ export const CreateAccount = async (data) => {
   return await makePostRequest(process.env.NEXT_PUBLIC_CREATEACCOUNT_API, data);
 };
 
-export const VerifyAccount = async (token, context) => {
+export const verifyAccount = async (token, context) => {
   return await makeGetRequest(
-    process.env.NEXT_PUBLIC_VERIFYACCOUNT_API,
-    +"?token=" + token,
+    process.env.NEXT_PUBLIC_VERIFYACCOUNT_API + "?token=" + token,
     context
   );
 };

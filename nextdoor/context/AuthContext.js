@@ -20,8 +20,9 @@ const defaultProvider = {
 };
 const AuthContext = createContext(defaultProvider);
 const AuthProvider = ({ children }) => {
+ 
   const [user, setUser] = useState(
-    GetCookie(process.env.NEXT_PUBLIC_AUTH) ?? defaultProvider?.user
+     GetCookie(process.env.NEXT_PUBLIC_AUTH) ?? defaultProvider?.user
   );
   const [loading, setLoading] = useState(defaultProvider?.loading);
   // ** Hooks

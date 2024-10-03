@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 //Context
-
+import { AuthContext } from "@/nextdoor/context/AuthContext";
 //Third Party
 import { toast } from "sonner";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 //Services
-import { CreateAccount } from "@/nextdoor/services/accountServices.js";
+import { upsertBusinessProfile } from "@/nextdoor/services/profileServices";
 //Helpers
 import { exceptionHandler } from "@/nextdoor/helpers/exceptionHandler";
 import { SetCookie } from "@/nextdoor/helpers/cookieHelper";
@@ -30,17 +30,20 @@ import { Input_Custom } from "@/nextdoor/components/Input_Custom";
 import { Label } from "@/components/ui/label";
 import Button_Custom from "@/nextdoor/components/Button_Custom";
 import Autocomplete_Custom from "@/nextdoor/components/Autocomplete";
+import { getAllBusinessCategories } from "@/nextdoor/services/masterdataServices";
+import MultiSelect_Custom from "@/nextdoor/components/MultiSelect_Custom";
 
-export default function CreateAccountPage() {
+export default function CreateBusinessPage({ businessCategoriesData }) {
   //context
   const router = useRouter();
+  const profileInfo = React.useContext(AuthContext);
   //states
   const [step, setStep] = useState(0);
   const [predictions, setPredictions] = useState([]);
   const [lngLatValue, setLngLatValue] = useState();
   const [isLoaded, setIsLoaded] = useState(false);
   const labelsForSteps = [
-    { subTitle: "Hesabının bilgilerini gir." },
+    { subTitle: "İş Hesabınızın Adını Girin." },
     { subTitle: "Kimlik bilgilerini gir." },
     { subTitle: "Şu anda bulunduğun adresini gir." },
   ];
@@ -48,7 +51,6 @@ export default function CreateAccountPage() {
   //react-hook-form definitions
   const form = useForm({
     mode: "onTouched",
-    resolver: yupResolver(CreateAccountValidation()),
   });
 
   //custom events
@@ -56,16 +58,17 @@ export default function CreateAccountPage() {
     debugger;
     let submitData = {
       ...data,
+      CategoryId: data.CategoryId.map((obj) => {
+        return businessCategoriesData.find((obj2) => obj2.label === obj).value;
+      }),
+      AccountId: JSON.parse(profileInfo.user).AccountId,
       Latitude: lngLatValue.lat,
       Longitude: lngLatValue.lng,
     };
 
-    await CreateAccount(submitData)
+    await upsertBusinessProfile(submitData)
       .then((res) => {
-        debugger;
-        toast.success(
-          "Hesabınız başarıyla oluşturulmuştur. E-posta adresinizi kontrol ederek hesabınızı aktifleştirebilirsiniz."
-        );
+        router.push(`${Routes.businessProfile}/${res?.data?.id}`);
       })
       .catch((err) => {
         exceptionHandler(err);
@@ -144,10 +147,10 @@ export default function CreateAccountPage() {
 
   return (
     <div className="flex mt-40 justify-center h-screen">
-      <Card className="w-[20%] h-[50%] flex flex-col items-center justify-center">
+      <Card className="w-[25%] h-[50%] flex flex-col items-center justify-center">
         <CardHeader className="text-center">
-          <CardTitle className="font-bold text-4x">
-            Etrafındaki Mahalleleri Keşfet
+          <CardTitle className="font-bold text-2xl">
+            Merhaba {JSON.parse(profileInfo.user)?.FirstName}
           </CardTitle>
           <CardDescription>{labelsForSteps[step].subTitle}</CardDescription>
         </CardHeader>
@@ -160,44 +163,18 @@ export default function CreateAccountPage() {
               <div className="grid w-full p-6 items-center gap-4">
                 <div className="flex w-full flex-col space-y-1.5">
                   <FormField
-                    name="Email"
+                    name="BusinessName"
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <Label htmlFor="email">E-Mail</Label>
+                        <Label htmlFor="email">İş Hesabı Adı</Label>
                         <FormControl>
                           <Input_Custom
                             {...field}
                             id="email"
                             className="w-full"
-                            placeholder="Your email"
-                            type="email"
-                            //isInvalid={!_isEmpty(errors.emailAddress?.message)}
-                            errorMessage={form.formState.errors.Email?.message}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="flex flex-col space-y-1.5">
-                  <FormField
-                    name="Password"
-                    control={form.control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <Label htmlFor="password">Şifre</Label>
-                        <FormControl>
-                          <Input_Custom
-                            {...field}
-                            id="password"
-                            className="w-full"
-                            placeholder="Your password"
-                            type="password"
-                            //isInvalid={!_isEmpty(errors.emailAddress?.message)}
-                            errorMessage={
-                              form.formState.errors.Password?.message
-                            }
+                            placeholder="İş adı"
+                            type="text"
                           />
                         </FormControl>
                       </FormItem>
@@ -210,22 +187,18 @@ export default function CreateAccountPage() {
               <div className="grid w-full p-6 items-center gap-4">
                 <div className="flex w-full flex-col space-y-1.5">
                   <FormField
-                    name="FirstName"
+                    name="Email"
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <Label htmlFor="firstName">İsim</Label>
+                        <Label htmlFor="Email">Şirket E-Mail</Label>
                         <FormControl>
                           <Input_Custom
                             {...field}
-                            id="firstName"
+                            id="email"
                             className="w-full"
-                            placeholder="Adınız"
+                            placeholder="Mail adresiniz"
                             type="text"
-                            //isInvalid={!_isEmpty(errors.emailAddress?.message)}
-                            errorMessage={
-                              form.formState.errors.FirstName?.message
-                            }
                           />
                         </FormControl>
                       </FormItem>
@@ -234,22 +207,18 @@ export default function CreateAccountPage() {
                 </div>
                 <div className="flex flex-col space-y-1.5">
                   <FormField
-                    name="LastName"
+                    name="Phone"
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <Label htmlFor="lastName">Soyisim</Label>
+                        <Label htmlFor="Phone">Şirket Telefonu</Label>
                         <FormControl>
                           <Input_Custom
                             {...field}
-                            id="lastName"
+                            id="phone"
                             className="w-full"
-                            placeholder="İsminiz"
+                            placeholder="Telefonunuz"
                             type="text"
-                            //isInvalid={!_isEmpty(errors.emailAddress?.message)}
-                            errorMessage={
-                              form.formState.errors.LastName?.message
-                            }
                           />
                         </FormControl>
                       </FormItem>
@@ -285,6 +254,27 @@ export default function CreateAccountPage() {
                     )}
                   />
                 </div>
+                <div className="flex flex-col space-y-1.5">
+                  <FormField
+                    name="CategoryId"
+                    control={form.control}
+                    render={({ field }) => {
+                      console.log("Field value:", field.value); // Add this line to see the value
+                      return (
+                        <FormItem>
+                          <Label htmlFor="CategoryId">Şirket Telefonu</Label>
+                          <FormControl>
+                            <MultiSelect_Custom
+                              options={businessCategoriesData}
+                              //value={field.value}
+                              onChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                </div>
               </div>
             )}
             <CardFooter className="flex flex-col items-center justify-between w-full">
@@ -305,4 +295,21 @@ export default function CreateAccountPage() {
   );
 }
 
-CreateAccountPage.Layout = MainLayoutWithoutSideBar;
+CreateBusinessPage.Layout = MainLayoutWithoutSideBar;
+
+export async function getServerSideProps(context) {
+  let businessCategoriesData = [];
+
+  await getAllBusinessCategories(context).then(
+    (res) =>
+      (businessCategoriesData = res.data.map((obj) => {
+        return { label: obj.CategoryName, value: obj.Id };
+      }))
+  );
+
+  return {
+    props: {
+      businessCategoriesData: businessCategoriesData,
+    },
+  };
+}

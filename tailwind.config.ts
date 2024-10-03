@@ -53,6 +53,34 @@ const config: Config = {
           DEFAULT: "#9DFFA2",
           foreground: "#ffffff",
         },
+        danger: {
+          50: "#ffece9", // Very light red (almost white)
+          100: "#ffcfc9", // Lighter red
+          200: "#ffada4", // Light red
+          300: "#ff6c5d", // Medium-light red
+          400: "#ff4c3a", // Lighter than base red
+          500: "#FF1E0C", // Base red (Main color)
+          600: "#e61909", // Slightly darker red
+          700: "#b81307", // Darker red
+          800: "#8f0f05", // Even darker red
+          900: "#670b03", // Darkest red
+          DEFAULT: "#FF1E0C", // Main color is still default
+          foreground: "#ffffff", // Keep the foreground color white for contrast
+        },
+        success: {
+          50: "#eaffea", // Very light green (almost white)
+          100: "#c4ffc4", // Light green
+          200: "#9bff9b", // Light-medium green
+          300: "#73ff73", // Medium-light green
+          400: "#4eff4e", // Lighter than base green
+          500: "#5EFF2A", // Base green (Main color)
+          600: "#53e526", // Slightly darker green
+          700: "#3fb51f", // Darker green
+          800: "#2e8617", // Even darker green
+          900: "#1f5c10", // Darkest green
+          DEFAULT: "#5EFF2A", // Main color is still default
+          foreground: "#ffffff", // White foreground for contrast
+        },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
