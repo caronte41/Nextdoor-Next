@@ -45,15 +45,15 @@ export function Combobox_Custom({
   };
 
   return (
-    <div className="grid w-full max-w-sm items-center gap-1.5 relative">
-      <Label htmlFor="picture">{label}</Label>
+    <div className="flex flex-col space-y-1">
+      <Label htmlFor="combo">{label}</Label>
       <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
+        <PopoverTrigger className="w-full" asChild>
           <Button
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[200px] justify-between"
+            className="w-full justify-between"
           >
             {value
               ? items.find((item) => item.value === value)?.label
@@ -61,7 +61,7 @@ export function Combobox_Custom({
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
+        <PopoverContent className="w-full p-0">
           <Command>
             <CommandInput
               placeholder={`Search ${placeholder.toLowerCase()}...`}

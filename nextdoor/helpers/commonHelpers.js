@@ -15,17 +15,17 @@ export const convertToBase64 = async (file) => {
 };
 
 export const getCurrentDay = () => {
-  const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
+  const daysOfWeek = [
+    "Pazar",
+    "Pazartesi",
+    "Salı",
+    "Çarşamba",
+    "Perşembe",
+    "Cuma",
+    "Cumartesi",
   ];
   const currentDayIndex = new Date().getDay();
-  return days[currentDayIndex];
+  return daysOfWeek[currentDayIndex];
 };
 
 export const calculateDistance = (lat1, lon1, lat2, lon2) => {

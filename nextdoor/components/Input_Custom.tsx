@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
 
 // Extend the props for customization
 export interface InputCustomProps
@@ -23,7 +24,7 @@ const Input_Custom = React.forwardRef<HTMLInputElement, InputCustomProps>(
   ) => {
     return (
       <div className="flex flex-col space-y-1">
-        {label && <label className="text-sm font-medium">{label}</label>}
+        {label && <Label>{label}</Label>}
         <input
           type={type}
           className={cn(

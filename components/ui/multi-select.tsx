@@ -203,7 +203,7 @@ const MultiSelector = ({
       <Command
         onKeyDown={handleKeyDown}
         className={cn(
-          "overflow-visible bg-white flex flex-col space-y-2",
+          "overflow-visible  border-input bg-white flex flex-col ",
           className
         )}
         dir={dir}
@@ -230,7 +230,7 @@ const MultiSelectorTrigger = forwardRef<
     <div
       ref={ref}
       className={cn(
-        "flex flex-wrap gap-1 p-1 py-2 ring-1 ring-muted rounded-lg bg-white",
+        "flex flex-wrap gap-1 p-1 pb-2  ring-1 ring-muted rounded-md bg-white",
         {
           "ring-1 focus-within:ring-ring": activeIndex === -1,
         },
@@ -309,7 +309,7 @@ const MultiSelectorContent = forwardRef<
 >(({ children }, ref) => {
   const { open } = useMultiSelect();
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className=" relative">
       {open && children}
     </div>
   );
@@ -325,7 +325,7 @@ const MultiSelectorList = forwardRef<
     <CommandList
       ref={ref}
       className={cn(
-        "p-2 flex flex-col gap-2 rounded-md scrollbar-thin scrollbar-track-transparent transition-colors scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg w-full absolute bg-white shadow-md z-10 border border-muted top-0",
+        "p-2 flex flex-col  gap-2 rounded-md scrollbar-thin scrollbar-track-transparent transition-colors scrollbar-thumb-muted-foreground dark:scrollbar-thumb-muted scrollbar-thumb-rounded-lg w-full absolute bg-white shadow-md z-10 border border-muted top-0",
         className
       )}
     >

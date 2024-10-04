@@ -13,6 +13,7 @@ import {
   getBusinessProfileByAccountId,
   getIndividualProfileByAccountId,
   updateIndividualProfile,
+  upsertBusinessProfile,
 } from "@/nextdoor/services/profileServices.js";
 import {
   getAllBusinessCategories,
@@ -64,6 +65,7 @@ import { Link04Icon } from "@/nextdoor/icons/LinkIcon";
 import { TelephoneIcon } from "@/nextdoor/icons/TelephoneIcon";
 import MultiSelect_Custom from "@/nextdoor/components/MultiSelect_Custom";
 import { GetCookie } from "@/nextdoor/helpers/cookieHelper";
+import Link from "next/link";
 
 export default function ProfilePage({
   profileData,
@@ -90,15 +92,6 @@ export default function ProfilePage({
   const [sortedHours, setSortedHours] = useState([]);
   const [distance, setDistance] = useState(null);
   const currentDay = getCurrentDay();
-  const businessHours = {
-    Monday: "10:00–17:00",
-    Tuesday: "10:00–17:00",
-    Wednesday: "10:00–17:00",
-    Thursday: "10:00–17:00",
-    Friday: "Closed",
-    Saturday: "Closed",
-    Sunday: "Closed",
-  };
 
   //react-hook-form definitions
   const form = useForm({
@@ -110,12 +103,24 @@ export default function ProfilePage({
   const onSubmit = async (data) => {
     data = {
       ...data,
+      CategoryId: data.CategoryId.map((categoryLabel) => {
+        const matchingCategory = businessCategoriesData.find(
+          (obj) => obj.label === categoryLabel
+        );
+        return matchingCategory ? matchingCategory.value : null;
+      }),
+      BusinessHours: JSON.stringify(
+        data.BusinessHours.reduce((acc, curr, index) => {
+          acc[daysOfWeek[index]] = curr;
+          return acc;
+        }, {})
+      ),
       AccountId: _firstOrDefault(router.query.recordId),
       CoverPhoto: await convertToBase64(data.CoverPhoto),
-      ProfilePhoto: await convertToBase64(data.ProfilePhoto),
+      LogoPhoto: await convertToBase64(data.LogoPhoto),
     };
     debugger;
-    await updateIndividualProfile(data)
+    await upsertBusinessProfile(data)
       .then(async (res) => {
         await getIndividualProfileByAccountId(
           _firstOrDefault(router.query.recordId)
@@ -129,16 +134,22 @@ export default function ProfilePage({
 
   //react events
   useEffect(() => {
-    const daysOfWeek = Object.keys(businessHours);
-    const currentDayIndex = daysOfWeek.indexOf(currentDay);
+    const businessHours = JSON.parse(profileData.BusinessHours); // Parse once
+    const daysOfWeek = Object.keys(businessHours); // Get all the days from the businessHours object
+    const currentDayIndex = daysOfWeek.indexOf(currentDay); // Find the current day's index
+
+    // Reorder days starting from the current day
     const reorderedDays = [
       ...daysOfWeek.slice(currentDayIndex),
       ...daysOfWeek.slice(0, currentDayIndex),
     ];
+
+    // Map to a new array with the day and the hours object (opening and closing)
     const sortedHours = reorderedDays.map((day) => ({
       day,
       hours: businessHours[day],
     }));
+
     setSortedHours(sortedHours);
   }, []);
 
@@ -243,7 +254,7 @@ export default function ProfilePage({
                     Profil Değiştir
                   </Button_Custom>
                 )}
-                <Sheet className="">
+                <Sheet>
                   <SheetTrigger asChild>
                     {isOwnerOfPage && (
                       <Button_Custom
@@ -278,11 +289,11 @@ export default function ProfilePage({
                                 control={form.control}
                                 render={({ field }) => (
                                   <FormItem>
-                                    <Label htmlFor="bio">Hakkında</Label>
                                     <FormControl>
                                       <Input_Custom
                                         {...field}
                                         id="bio"
+                                        label="Hakkında"
                                         className="w-full"
                                         placeholder="Bio"
                                         type="text"
@@ -302,11 +313,11 @@ export default function ProfilePage({
                                 control={form.control}
                                 render={({ field }) => (
                                   <FormItem>
-                                    <Label htmlFor="bio">E-Mail</Label>
                                     <FormControl>
                                       <Input_Custom
                                         {...field}
                                         id="bio"
+                                        label="E-Mail"
                                         className="w-full"
                                         placeholder="Bio"
                                         type="text"
@@ -328,13 +339,13 @@ export default function ProfilePage({
                                 control={form.control}
                                 render={({ field }) => (
                                   <FormItem>
-                                    <Label htmlFor="bio">Web Sitesi</Label>
                                     <FormControl>
                                       <Input_Custom
                                         {...field}
                                         id="bio"
+                                        label="Web Sitesi"
                                         className="w-full"
-                                        placeholder="Bio"
+                                        placeholder="Web Sitesi"
                                         type="text"
                                         //isInvalid={!_isEmpty(errors.emailAddress?.message)}
                                         //   errorMessage={
@@ -352,13 +363,13 @@ export default function ProfilePage({
                                 control={form.control}
                                 render={({ field }) => (
                                   <FormItem>
-                                    <Label htmlFor="bio">Telefon</Label>
                                     <FormControl>
                                       <Input_Custom
                                         {...field}
                                         id="bio"
+                                        label="Telefon"
                                         className="w-full"
-                                        placeholder="Bio"
+                                        placeholder="Telefon"
                                         type="text"
                                         //isInvalid={!_isEmpty(errors.emailAddress?.message)}
                                         //   errorMessage={
@@ -382,9 +393,9 @@ export default function ProfilePage({
                                       <Combobox_Custom
                                         {...field}
                                         //className="w-full"
-                                        label="Cinsiyet"
+                                        label="İş Durumu"
                                         onSelect={field.onChange}
-                                        placeholder="Cinsiyet"
+                                        placeholder="İş Durumu"
                                         items={BusinessStatusDropdown}
                                         //isInvalid={!_isEmpty(errors.emailAddress?.message)}
                                         //   errorMessage={
@@ -403,11 +414,9 @@ export default function ProfilePage({
                                 render={({ field }) => {
                                   return (
                                     <FormItem>
-                                      <Label htmlFor="CategoryId">
-                                        Şirket Telefonu
-                                      </Label>
                                       <FormControl>
                                         <MultiSelect_Custom
+                                          label="Kategoriler"
                                           options={businessCategoriesData}
                                           //value={field.value}
                                           onChange={field.onChange}
@@ -531,17 +540,25 @@ export default function ProfilePage({
             >
               <Clock01Icon />
               {!isExpanded && (
-                <Typography_Custom variant="small">{`${currentDay}: ${businessHours[currentDay]}`}</Typography_Custom>
+                <Typography_Custom variant="small">
+                  {`${currentDay}: ${
+                    JSON.parse(profileData.BusinessHours)[currentDay]
+                      ?.openingHour
+                  } - ${
+                    JSON.parse(profileData.BusinessHours)[currentDay]
+                      ?.closingHour
+                  }`}
+                </Typography_Custom>
               )}
               {isExpanded && (
                 <div className="mt-2">
                   {sortedHours.map(({ day, hours }) => (
-                    <div key={day} className="flex pr-4  justify-between">
+                    <div key={day} className="flex pr-4 justify-between">
                       <Typography_Custom variant="small">
                         {day}
                       </Typography_Custom>
                       <Typography_Custom variant="small">
-                        {hours}
+                        {hours.openingHour} - {hours.closingHour}
                       </Typography_Custom>
                     </div>
                   ))}
@@ -565,16 +582,38 @@ export default function ProfilePage({
 
             <div className="flex items-center gap-2">
               <Mail01Icon />
-              <Typography_Custom variant="small" className="break-all">
-                {profileData.Email}
-              </Typography_Custom>
+              <Link href={`mailto:${profileData.Email}`}>
+                <Typography_Custom
+                  variant="small"
+                  weight="semiBold"
+                  className="break-all underline"
+                >
+                  {profileData.Email}
+                </Typography_Custom>
+              </Link>
             </div>
 
             <div className="flex items-center gap-2">
               <Link04Icon />
-              <Typography_Custom variant="small" className="truncate">
-                {profileData.Website}
-              </Typography_Custom>
+              <Link
+                href={
+                  profileData.Website.startsWith("http")
+                    ? profileData.Website
+                    : `https://${profileData.Website}`
+                }
+                passHref
+              >
+                <Typography_Custom
+                  variant="small"
+                  weight="semiBold"
+                  className="truncate underline"
+                  as="a" // Render as anchor tag
+                  target="_blank" // Opens in new window
+                  rel="noopener noreferrer" // Security best practice
+                >
+                  {profileData.Website}
+                </Typography_Custom>
+              </Link>
             </div>
           </div>
         </Card>
