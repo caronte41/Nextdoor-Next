@@ -85,8 +85,9 @@ export default function ProfilePage({
   ];
   //states
   const [isOwnerOfPage] = useState(
-    user.AccountId === _firstOrDefault(router.query.recordId)
+    user.accountId === _firstOrDefault(router.query.recordId)
   );
+
   const [isExpanded, setIsExpanded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [sortedHours, setSortedHours] = useState([]);
@@ -134,7 +135,7 @@ export default function ProfilePage({
 
   //react events
   useEffect(() => {
-    const businessHours = JSON.parse(profileData.BusinessHours); // Parse once
+    const businessHours = JSON.parse(profileData.businessHours); // Parse once
     const daysOfWeek = Object.keys(businessHours); // Get all the days from the businessHours object
     const currentDayIndex = daysOfWeek.indexOf(currentDay); // Find the current day's index
 
@@ -164,8 +165,8 @@ export default function ProfilePage({
           const distanceFromCorporate = calculateDistance(
             userLatitude,
             userLongitude,
-            profileData.Latitude,
-            profileData.Longitude
+            profileData.latitude,
+            profileData.longitude
           );
 
           // Set the distance in the state
@@ -188,9 +189,9 @@ export default function ProfilePage({
             <div className="relative w-full h-1/2">
               <Image
                 src={`${
-                  _isNullorUndefined(profileData.CoverPhoto)
+                  _isNullorUndefined(profileData.coverPhoto)
                     ? "/Cityscape.png"
-                    : `https://localhost:7071${profileData.CoverPhoto}`
+                    : `https://localhost:7071${profileData.coverPhoto}`
                 }`}
                 layout="fill"
                 objectFit="cover"
@@ -203,9 +204,9 @@ export default function ProfilePage({
                 <div className="w-32 h-32 rounded-full overflow-hidden">
                   <Image
                     src={`${
-                      _isNullorUndefined(profileData.LogoPhoto)
+                      _isNullorUndefined(profileData.logoPhoto)
                         ? "/Certificate.png"
-                        : `https://localhost:7071${profileData.LogoPhoto}`
+                        : `https://localhost:7071${profileData.logoPhoto}`
                     }`}
                     layout="intrinsic"
                     width={128}
@@ -217,14 +218,14 @@ export default function ProfilePage({
 
                 <div className="mt-4 ">
                   <Typography_Custom weight="bold" variant="h3">
-                    {profileData.BusinessName}
+                    {profileData.businessName}
                   </Typography_Custom>
 
                   <Typography_Custom variant="h6">
-                    {profileData.CategoryNames.join(", ")}
+                    {profileData.categoryNames.join(", ")}
                   </Typography_Custom>
                   <Typography_Custom variant="h6">
-                    {profileData.About}
+                    {profileData.about}
                   </Typography_Custom>
                   <div className="flex flex-wrap gap-4 mt-2">
                     {!isOwnerOfPage && (
@@ -238,11 +239,10 @@ export default function ProfilePage({
                       }
                       variant="secondary"
                       className="bg-secondary-100 rounded-lg"
-                      onMouseEnter={() => setIsHovered(true)} // Set hover state to true on mouse enter
-                      onMouseLeave={() => setIsHovered(false)} // Set hover state to false on mouse leave
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
                     >
-                      {isHovered ? profileData.Phone : "Ara"}{" "}
-                      {/* Conditionally render label */}
+                      {isHovered ? profileData.phone : "Ara"}
                     </Button_Custom>
                   </div>
                 </div>
@@ -257,10 +257,7 @@ export default function ProfilePage({
                 <Sheet>
                   <SheetTrigger asChild>
                     {isOwnerOfPage && (
-                      <Button_Custom
-                        onClick={() => form.reset(profileData)}
-                        className="bg-primary-100"
-                      >
+                      <Button_Custom className="bg-primary-100">
                         Düzenle
                       </Button_Custom>
                     )}
@@ -542,10 +539,10 @@ export default function ProfilePage({
               {!isExpanded && (
                 <Typography_Custom variant="small">
                   {`${currentDay}: ${
-                    JSON.parse(profileData.BusinessHours)[currentDay]
+                    JSON.parse(profileData.businessHours)[currentDay]
                       ?.openingHour
                   } - ${
-                    JSON.parse(profileData.BusinessHours)[currentDay]
+                    JSON.parse(profileData.businessHours)[currentDay]
                       ?.closingHour
                   }`}
                 </Typography_Custom>
@@ -569,7 +566,7 @@ export default function ProfilePage({
             <div className="flex items-start gap-2">
               <MapsIcon width={50} height={50} />
               <Typography_Custom variant="small" className="break-words">
-                {profileData.Address}
+                {profileData.address}
               </Typography_Custom>
             </div>
 
@@ -582,13 +579,13 @@ export default function ProfilePage({
 
             <div className="flex items-center gap-2">
               <Mail01Icon />
-              <Link href={`mailto:${profileData.Email}`}>
+              <Link href={`mailto:${profileData.email}`}>
                 <Typography_Custom
                   variant="small"
                   weight="semiBold"
                   className="break-all underline"
                 >
-                  {profileData.Email}
+                  {profileData.email}
                 </Typography_Custom>
               </Link>
             </div>
@@ -597,9 +594,9 @@ export default function ProfilePage({
               <Link04Icon />
               <Link
                 href={
-                  profileData.Website.startsWith("http")
-                    ? profileData.Website
-                    : `https://${profileData.Website}`
+                  profileData.website.startsWith("http")
+                    ? profileData.website
+                    : `https://${profileData.website}`
                 }
                 passHref
               >
@@ -611,7 +608,7 @@ export default function ProfilePage({
                   target="_blank" // Opens in new window
                   rel="noopener noreferrer" // Security best practice
                 >
-                  {profileData.Website}
+                  {profileData.website}
                 </Typography_Custom>
               </Link>
             </div>
@@ -632,12 +629,14 @@ export async function getServerSideProps(context) {
   let cookie = await GetCookie(process.env.NEXT_PUBLIC_AUTH, context);
   cookie = JSON.parse(cookie);
 
-  await getAllBusinessCategories(context).then(
-    (res) =>
-      (businessCategoriesData = res.data.map((obj) => {
-        return { label: obj.CategoryName, value: obj.Id };
-      }))
-  );
+  await getAllBusinessCategories(context).then((res) => {
+    console.log(res.data);
+    return (businessCategoriesData = res.data.map((obj) => {
+      return { label: obj.categoryName, value: obj.id };
+    }));
+  });
+
+  console.log("hebelehübele:", businessCategoriesData);
 
   await getBusinessProfileByAccountId(
     _firstOrDefault(context.query.recordId),

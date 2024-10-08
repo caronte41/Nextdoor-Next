@@ -6,8 +6,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Command, CommandItem, CommandList } from "@/components/ui/command";
+import { Label } from "@/components/ui/label";
 
 interface AutocompleteCustomProps {
+  label: string;
   placeholder?: string;
   value: string; // Controlled value from react-hook-form
   onChange: (value: string) => void; // onChange handler from react-hook-form
@@ -28,6 +30,7 @@ const debounce = (func: (...args: any[]) => void, delay: number) => {
 const Autocomplete_Custom: React.FC<AutocompleteCustomProps> = ({
   placeholder = "Search...",
   value,
+  label,
   onChange,
   onInputChange,
   predictions,
@@ -91,37 +94,40 @@ const Autocomplete_Custom: React.FC<AutocompleteCustomProps> = ({
   };
 
   return (
-    <Popover open={isPopoverOpen} onOpenChange={setPopoverOpen}>
-      <PopoverTrigger>
-        <Input
-          ref={inputRef}
-          value={inputValue}
-          onChange={handleInputChange}
-          placeholder={placeholder}
-          aria-label={placeholder}
-          onFocus={() => {
-            //setPopoverOpen(!!inputValue);
-          }}
-        />
-      </PopoverTrigger>
-      {predictions.length > 0 && isPopoverOpen && (
-        <PopoverContent ref={popoverRef} className="w-full">
-          <Command>
-            <CommandList>
-              {predictions.map((prediction, index) => (
-                <CommandItem
-                  key={index}
-                  onMouseDown={(e) => e.preventDefault()}
-                  onSelect={() => handleSelect(prediction)}
-                >
-                  {prediction}
-                </CommandItem>
-              ))}
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      )}
-    </Popover>
+    <div className="flex flex-col space-y-1">
+      <Label htmlFor="auto">{label}</Label>
+      <Popover open={isPopoverOpen} onOpenChange={setPopoverOpen}>
+        <PopoverTrigger className="w-full">
+          <Input
+            ref={inputRef}
+            value={inputValue}
+            onChange={handleInputChange}
+            placeholder={placeholder}
+            aria-label={placeholder}
+            onFocus={() => {
+              //setPopoverOpen(!!inputValue);
+            }}
+          />
+        </PopoverTrigger>
+        {predictions.length > 0 && isPopoverOpen && (
+          <PopoverContent ref={popoverRef} className="w-full">
+            <Command>
+              <CommandList>
+                {predictions.map((prediction, index) => (
+                  <CommandItem
+                    key={index}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onSelect={() => handleSelect(prediction)}
+                  >
+                    {prediction}
+                  </CommandItem>
+                ))}
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        )}
+      </Popover>
+    </div>
   );
 };
 
